@@ -53,10 +53,10 @@ export default class Point {
         let dbl: Point = this;
         for (let i = 0; i < BITS; i++) {
           this.precomputes.push(dbl);
-          dbl = dbl.double(); // [G, 2G, 4G, 8G..., 256G], optimized
+          dbl = dbl.double();
         }
         return this.precomputes;
-      }
+    }
       
     //https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication
     multiplyCT = (n: bigint) => {

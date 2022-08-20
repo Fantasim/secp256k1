@@ -26,6 +26,7 @@ export default class PublicKey {
         const isCompressed = normalizedBuffer.length === PUBKEY_COMPRESSED_LENGTH
         if (isCompressed){
             /* 
+                http://hyperelliptic.org/EFD/g1p/auto-shortw.html
                 y^2 = x^3 + a*x + b
             */
             const x = bytesToInt(normalizedBuffer.subarray(1, PUBKEY_COMPRESSED_LENGTH))
@@ -42,16 +43,12 @@ export default class PublicKey {
             const y = normalizedBuffer.subarray(PUBKEY_COMPRESSED_LENGTH, PUBKEY_LENGTH)
             return new PublicKey(new Point(bytesToInt(x), bytesToInt(y)))
         }
-
     }
 
-    private _p: Point
-    constructor(p: Point){
-        this._p = p
-    }
+    constructor(private p: Point){}
 
     to = () => {
-        const point = () => this._p
+        const point = () => this.p
         const hex = (isCompressed = false) => {
             const p = point()
             const x = bytesToHex(intToBytes(p.x))
