@@ -1,9 +1,9 @@
-import { _0n, _1n, _2n } from "./constant";
+import { BITS, _0n, _1n, _2n } from "./constant";
 export const hexToNumber = (hex: string) => BigInt(`0x${hex}`)
 export const bytesToHex = (b: Buffer) => b.toString('hex')
 export const bytesToInt = (b: Buffer) => BigInt('0x' + bytesToHex(b)).valueOf()
 export const intToBytes = (b: BigInt | number) => {
-    if (b > _2n ** BigInt(256)) throw new Error('Expected number < 2^256');
+    if (b > _2n ** BigInt(BITS)) throw new Error(`Expected number < 2^${BITS}`);
     return Buffer.from(b.toString(16).padStart(64, '0'), 'hex')
 }
 export const intToBinary = (num: bigint) => {

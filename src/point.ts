@@ -1,4 +1,4 @@
-import { CURVE, _0n, _1n, _2n, _3n } from "./constant";
+import { BITS, CURVE, _0n, _1n, _2n, _3n } from "./constant";
 import ModMath from "./mod-math";
 const { mod, invert } = ModMath
 
@@ -7,8 +7,9 @@ export default class Point {
     static SECP256K1 = new Point(CURVE.Gx, CURVE.Gy)
     static ZERO = new Point(_0n, _0n)
 
-    constructor(public x: bigint, public y: bigint){}
+    private precomputes: Point[] = []
 
+    constructor(public x: bigint, public y: bigint){}
     //http://hyperelliptic.org/EFD/g1p/auto-shortw.html
     add = (p: Point) => {   
         const [y1, x1, y2, x2] = [this.y, this.x, p.y, p.x]
@@ -45,17 +46,29 @@ export default class Point {
        return new Point(x2, y2)
     }
 
+    getPrecomputes = () => {
+        if (this.precomputes.length) 
+            return this.precomputes;
+        this.precomputes = [];
+        let dbl: Point = this;
+        for (let i = 0; i < BITS; i++) {
+          this.precomputes.push(dbl);
+          dbl = dbl.double(); // [G, 2G, 4G, 8G..., 256G], optimized
+        }
+        return this.precomputes;
+      }
+      
     //https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication
     multiplyCT = (n: bigint) => {
-        let dbl = new Point(this.x, this.y)
         let ret = Point.ZERO
         let fake = Point.ZERO
-        for (let i = 0; i < 256; i++){
+
+        const dbls = this.getPrecomputes()
+        for (let i = 0; i < BITS; i++){
             if (n & _1n)
-                ret = ret.add(dbl) 
+                ret = ret.add(dbls[i]) 
             else 
-                fake = fake.add(dbl)
-            dbl = dbl.double()
+                fake = fake.add(dbls[i])
             n >>= _1n
         }
         return ret

@@ -1,10 +1,11 @@
+export const BITS = 256
+
 export const _0n = BigInt(0);
 export const _1n = BigInt(1);
 export const _2n = BigInt(2);
 export const _3n = BigInt(3);
 export const _4n = BigInt(4);
 export const _8n = BigInt(8);
-
 export const CURVE = Object.freeze({
   // Params: a, b
   a: _0n,
