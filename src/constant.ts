@@ -2,6 +2,7 @@ export const _0n = BigInt(0);
 export const _1n = BigInt(1);
 export const _2n = BigInt(2);
 export const _3n = BigInt(3);
+export const _4n = BigInt(4);
 export const _8n = BigInt(8);
 
 export const CURVE = Object.freeze({
@@ -20,3 +21,6 @@ export const CURVE = Object.freeze({
   Gx: BigInt('55066263022277343669578718895168534326250603453777594175500187360389116729240'),
   Gy: BigInt('32670510020758816978083085130507043184471273380659243275938904335757337482424'),
 });
+
+export const PUBKEY_COMPRESSED_LENGTH = 33
+export const PUBKEY_LENGTH = 65

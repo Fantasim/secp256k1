@@ -1,6 +1,9 @@
 import { _0n } from './constant'
 import ModMath from './mod-math'
+import Point from './point'
+import PublicKey from './public-key'
 import { hexToNumber, bytesToHex } from './utils'
+
 
 export default class PrivateKey {
 
@@ -21,5 +24,7 @@ export default class PrivateKey {
         this._p = ModMath.mod(p)
       }
     }
+
     get = () => this._p
+    publicKey = () => new PublicKey(Point.SECP256K1.multiplyCT(this._p))
 }

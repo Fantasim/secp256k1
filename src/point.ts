@@ -9,6 +9,7 @@ export default class Point {
 
     constructor(public x: bigint, public y: bigint){}
 
+    //http://hyperelliptic.org/EFD/g1p/auto-shortw.html
     add = (p: Point) => {   
         const [y1, x1, y2, x2] = [this.y, this.x, p.y, p.x]
         if (x1 === 0n || y1 === 0n) return p;
@@ -26,7 +27,7 @@ export default class Point {
 
         return new Point(x3, y3)
     }
-
+    //http://hyperelliptic.org/EFD/g1p/auto-shortw.html
     double = () => {
         const { x, y } = this
         const { a } = CURVE
@@ -44,6 +45,7 @@ export default class Point {
        return new Point(x2, y2)
     }
 
+    //https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication
     multiplyCT = (n: bigint) => {
         let dbl = new Point(this.x, this.y)
         let ret = Point.ZERO

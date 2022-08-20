@@ -1,4 +1,5 @@
-import { CURVE, _0n, _1n } from './constant'
+import { CURVE, _0n, _1n, _4n } from './constant'
+import { intToBinary, intToBytes } from './utils'
 
 export default class ModMath {
 
@@ -36,4 +37,26 @@ export default class ModMath {
       }
       return ModMath.mod(t1, b)
     }
-  }
+
+    static weistrass(x: bigint): bigint {
+      const { a, b } = CURVE;
+      const x2 = ModMath.mod(x * x);
+      const x3 = ModMath.mod(x2 * x);
+      return ModMath.mod(x3 + a * x + b);
+    }
+
+
+    static pow = (a: bigint, expo: bigint, mod = CURVE.P) => {
+      const bin = intToBinary(expo)
+      let ret = a
+      for (let i = 1; i < bin.length; i++){
+        ret = ModMath.mod(ret * ret, mod)
+        if (bin[i]){
+          ret = ModMath.mod(ret * a, mod)
+        }
+      }
+      return ret
+    }
+    
+    static sqrt = (a: bigint, b = CURVE.P) => ModMath.pow(a, (b+_1n) / _4n, b)
+}
