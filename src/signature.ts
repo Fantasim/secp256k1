@@ -16,7 +16,19 @@ export default class Signature {
 
     constructor(private r: bigint, private s: bigint) {}
 
-    verify = (data: string, publickey: PublicKey) => {
+    /*
+        verify(r, s, m, Q) where
+            r, s = outputs from sign()
+            m = message to sign
+            h(m) message hash converted to number
+            Q = public key for private key d which signed m
+        w = s**-1 mod n
+        u1 = h(m)*w mod n
+        u2 = rw mod n
+        (x2, y2) = G × u1 + Q × u2
+        x2 == r
+    */
+    verify = (data: string | Buffer, publickey: PublicKey) => {
         const { r, s } = this
         const hM = bytesToInt(Signature.dataToHash(data))
         const Q = publickey.to().point()

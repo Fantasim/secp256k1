@@ -29,8 +29,16 @@ export default class PrivateKey {
     get = () => this._p
     publicKey = () => new PublicKey(Point.SECP256K1.multiplyCT(this._p))
 
-    sign = (data: string) => {
-
+    /*
+      sign(m, d, k) where
+        m = message to sign and h(m) is its hash converted to number
+        d = private key converted to number
+        k = random number
+      (x1, y1) = G × k
+      r = x1 mod n
+      s = (k**-1 * (h(m) + d * r) mod n
+    */
+    sign = (data: string | Buffer) => {
       const k = PrivateKey.random().get()
       const R = Point.SECP256K1.multiplyCT(k)
       const r = mod(R.x, CURVE.n)
