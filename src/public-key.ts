@@ -7,13 +7,13 @@ const { mod } = ModMath
 export default class PublicKey {
 
     static from = (p: string | Point | Buffer) => {
-        let normalizedBuffer: Buffer
+        let normalizedBuffer: Buffer = Buffer.from([])
 
         if (p instanceof Point)
             return new PublicKey(p)
         else if (typeof p === 'string')
             normalizedBuffer = Buffer.from(p, 'hex')
-        else (p instanceof Buffer)
+        else if (p instanceof Buffer)
             normalizedBuffer = p as Buffer
 
         if ( 
@@ -25,12 +25,18 @@ export default class PublicKey {
 
         const isCompressed = normalizedBuffer.length === PUBKEY_COMPRESSED_LENGTH
         if (isCompressed){
-            const isFirstByteOdd = normalizedBuffer[0] === 3
+            /* 
+                y^2 = x^3 + a*x + b
+            */
             const x = bytesToInt(normalizedBuffer.subarray(1, PUBKEY_COMPRESSED_LENGTH))
-            let ySqrt = ModMath.sqrt(ModMath.weistrass(x))
-            const isYOdd = (ySqrt & _1n) === _1n;
-            if (isFirstByteOdd !== isYOdd)
-                ySqrt = mod(-ySqrt);
+            // y2 = x^3 + a * x + b
+            const y2 = ModMath.weistrass(x)
+            //y = √y2
+            const y = ModMath.sqrt(y2)
+
+            const isFirstByteOdd = normalizedBuffer[0] === 3
+            const isYOdd = (y & _1n) === _1n;
+            return new PublicKey(new Point(x, isFirstByteOdd === isYOdd ? y : mod(-y)))
         } else {
             const x = normalizedBuffer.subarray(1, PUBKEY_COMPRESSED_LENGTH)
             const y = normalizedBuffer.subarray(PUBKEY_COMPRESSED_LENGTH, PUBKEY_LENGTH)
